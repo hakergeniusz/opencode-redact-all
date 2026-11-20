@@ -69,9 +69,9 @@ export function transformUserInput(text: string, ctx: RedactionContext): { text:
 }
 
 /**
- * Track partial private-key reads across chunks (multi-chunk reads of private keys).
- * behavior: a `read` of a PEM private key without an END marker marks the path
- * so subsequent chunks are fully redacted until an END marker is seen.
+ * Track partial private-key reads across chunks.
+ * A `read` of a PEM private key without an END marker marks the path so
+ * subsequent chunks are fully redacted until an END marker is seen.
  */
 export function updatePartialPrivateKeyPaths(
   output: string,
@@ -130,9 +130,8 @@ export interface BlockResult {
 }
 
 /**
- * blockMode check for tool calls (helper; not wired as a hard execution gate in OpenCode).
- * hook. OpenCode V2 prompt/context hooks cannot hard-block a tool execution;
- * see README (gaps) for how this is surfaced.
+ * blockMode check for tool calls (helper; not wired as a hard execution gate
+ * in OpenCode). Prompt/context hooks cannot block tool execution.
  */
 export function shouldBlock(
   toolName: string,

@@ -4,8 +4,8 @@
 //   * post-tool redaction    -> ctx.session.hook("context"|"compaction"|"generate"|"title", ...)
 //   * session toggle + info  -> ctx.command.transform(...)
 //
-// Write-like tools (write/edit/patch and mcp__*__write*) are never filtered,
-// exactly as in the original extension — their output is model-generated code.
+// Write-like tools (write/edit/patch and mcp__*__write*) are never filtered —
+// their output is model-generated code.
 
 import { Plugin } from "@opencode/plugin"
 import { loadConfig } from "./config.js"
@@ -45,7 +45,6 @@ export default Plugin.define({
 
     // ──────────────────────────────────────────────────────────────
     // USER INPUT: redact the prompt before attachments/skills expand it.
-    // Redact user prompt text before it is sent to the model.
     // ──────────────────────────────────────────────────────────────
     await keep(ctx.session.hook("prompt", (event) => {
       if (!enabled || config.mode === "off") return
