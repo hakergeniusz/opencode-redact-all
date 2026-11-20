@@ -1,4 +1,4 @@
-// Session stats tracking (ported from pi-redact-all)
+// Session stats tracking.
 
 import type { Match } from "./types.js"
 

@@ -1,4 +1,4 @@
-// Shared types for opencode-redact-all (ported from pi-redact-all)
+// Shared types for opencode-redact-all
 
 export interface Match {
   start: number

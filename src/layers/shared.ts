@@ -1,4 +1,4 @@
-// Shared utilities for layer implementations (ported from pi-redact-all)
+// Shared utilities for layer implementations
 
 import type { Match } from "../types.js"
 

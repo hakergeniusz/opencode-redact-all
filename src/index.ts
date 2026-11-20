@@ -1,6 +1,5 @@
 // opencode-redact-all — native OpenCode V2 plugin.
 //
-// Behavior ported from the pi extension `pi-redact-all` (steimerbyte):
 //   * user input filter      -> ctx.session.hook("prompt", ...)
 //   * post-tool redaction    -> ctx.session.hook("context"|"compaction"|"generate"|"title", ...)
 //   * session toggle + info  -> ctx.command.transform(...)
@@ -46,7 +45,7 @@ export default Plugin.define({
 
     // ──────────────────────────────────────────────────────────────
     // USER INPUT: redact the prompt before attachments/skills expand it.
-    // This is the OpenCode equivalent of the pi `input` hook.
+    // Redact user prompt text before it is sent to the model.
     // ──────────────────────────────────────────────────────────────
     await keep(ctx.session.hook("prompt", (event) => {
       if (!enabled || config.mode === "off") return
@@ -156,7 +155,7 @@ export default Plugin.define({
     }
 
     // ──────────────────────────────────────────────────────────────
-    // COMMANDS: /redact on|off|status|stats|config plus legacy aliases.
+    // COMMANDS: /redact on|off|status|stats|config
     // Results are shown with session.synthetic (synthetic messages do not
     // re-run the prompt hook, so command output is never redacted).
     // ──────────────────────────────────────────────────────────────
@@ -204,20 +203,7 @@ export default Plugin.define({
           await show(sessionID, handleRedact(String(text)))
         },
       })
-      editor.add({
-        name: "redact-all-stats",
-        description: "Show opencode-redact-all session statistics (alias of `/redact stats`)",
-        execute: async ({ sessionID }) => {
-          await show(sessionID, formatStats(stats))
-        },
-      })
-      editor.add({
-        name: "redact-all-config",
-        description: "Show current opencode-redact-all configuration (alias of `/redact config`)",
-        execute: async ({ sessionID }) => {
-          await show(sessionID, "```json\n" + JSON.stringify(config, null, 2) + "\n```")
-        },
-      })
+
     }))
 
     return () => {

@@ -1,13 +1,11 @@
 // OpenCode-facing redaction helpers.
-// Ports the behavior of the pi extension's hooks/tool-result.ts,
-// hooks/tool-call.ts and hooks/user-input.ts into plain functions that the
-// session/tool hooks in index.ts can call.
+// Redaction helpers used by session and tool hooks.
 
 import { redactText } from "./layers/index.js"
 import { commandReadsSensitive, shouldBlockPath } from "./layers/layer-7-path.js"
 import type { Config, Match, RedactionContext } from "./types.js"
 
-/** Model-generated output: never filter or block (mirrors the pi extension). */
+/** Model-generated output: never filter or block. */
 export const WRITE_TOOLS = new Set(["write", "edit", "ssh_write", "ssh_edit", "multi_edit"])
 
 export function isWriteTool(name: string | undefined): boolean {
@@ -71,7 +69,7 @@ export function transformUserInput(text: string, ctx: RedactionContext): { text:
 }
 
 /**
- * Track partial private-key reads across chunks. Mirrors the pi extension's
+ * Track partial private-key reads across chunks (multi-chunk reads of private keys).
  * behavior: a `read` of a PEM private key without an END marker marks the path
  * so subsequent chunks are fully redacted until an END marker is seen.
  */
@@ -132,7 +130,7 @@ export interface BlockResult {
 }
 
 /**
- * blockMode check for tool calls. Ported from the pi extension's tool-call
+ * blockMode check for tool calls (helper; not wired as a hard execution gate in OpenCode).
  * hook. OpenCode V2 prompt/context hooks cannot hard-block a tool execution;
  * see README (gaps) for how this is surfaced.
  */

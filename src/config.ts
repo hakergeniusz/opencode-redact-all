@@ -1,11 +1,6 @@
 // Config loader for opencode-redact-all.
-// Ported from pi-redact-all. In OpenCode, options come from the plugin's
-// `options` object in opencode.json(c); the legacy pi config file is still
-// read as a fallback for backwards compatibility.
+// Options come from the plugin's `options` object in opencode.json(c).
 
-import { readFileSync, existsSync } from "node:fs"
-import { join } from "node:path"
-import { homedir } from "node:os"
 import type { Config } from "./types.js"
 
 export const DEFAULT_CONFIG: Config = {
@@ -38,9 +33,6 @@ export const DEFAULT_CONFIG: Config = {
   asterisksMax: 20,
 }
 
-/** Legacy pi config location, kept so existing pi-redact-all.json files keep working. */
-const LEGACY_CONFIG_PATH = join(homedir(), ".pi", "agent", "pi-redact-all.json")
-
 function mergeConfig(base: Config, user: Partial<Config> | undefined | null): Config {
   if (!user || typeof user !== "object") return { ...base }
   return {
@@ -71,32 +63,18 @@ function mergeConfig(base: Config, user: Partial<Config> | undefined | null): Co
   }
 }
 
-function readJson(path: string): Partial<Config> | undefined {
-  if (!existsSync(path)) return undefined
-  try {
-    return JSON.parse(readFileSync(path, "utf-8")) as Partial<Config>
-  } catch (err) {
-    console.error(`[opencode-redact-all] Failed to load config at ${path}:`, err)
-    return undefined
-  }
-}
-
 /**
- * Load configuration with precedence: OpenCode plugin options > legacy pi
- * config file > defaults.
+ * Load configuration with precedence: OpenCode plugin options > defaults.
  */
 export function loadConfig(options?: unknown): Config {
   let config = { ...DEFAULT_CONFIG }
-  const legacy = readJson(LEGACY_CONFIG_PATH)
-  if (legacy) config = mergeConfig(config, legacy)
   if (options && typeof options === "object") {
     // Support both a flat options object and a nested `config` object.
     const opts = options as Record<string, unknown>
     const flat = (opts.config && typeof opts.config === "object" ? opts.config : opts) as Partial<Config>
     config = mergeConfig(config, flat)
   }
-  // Nested objects from JSON are shallow-merged by mergeConfig; ensure the
-  // nested defaults survive if only some subkeys were provided.
+  // Ensure nested defaults survive if only some subkeys were provided.
   config.toolPolicy = {
     whitelist: config.toolPolicy?.whitelist ?? DEFAULT_CONFIG.toolPolicy.whitelist,
     blacklist: config.toolPolicy?.blacklist ?? DEFAULT_CONFIG.toolPolicy.blacklist,
